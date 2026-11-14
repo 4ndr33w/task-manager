@@ -1,0 +1,6 @@
+server:
+  port: 700
+
+spring:
+  application:
+    name: user_service
