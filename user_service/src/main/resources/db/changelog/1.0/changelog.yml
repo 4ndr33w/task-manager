@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: users-table.sql
+      relativeToChangeLogFile: true

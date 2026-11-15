@@ -13,3 +13,7 @@ spring:
 
   config:
     import: file:.env[.properties]
+
+  liquibase:
+    changeLog: "classpath:/db/changelog/root.yaml"
+    enabled: ${LIQUIBASE_ENABLED:false}

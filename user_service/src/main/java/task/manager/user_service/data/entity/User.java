@@ -26,4 +26,15 @@ public class User {
     @Column(updatable = false)
     private Instant createdAt;
     private Instant updatedAt;
+
+    @PrePersist
+    private void onCreate() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 }
