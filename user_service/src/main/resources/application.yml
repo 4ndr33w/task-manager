@@ -17,3 +17,9 @@ spring:
   liquibase:
     changeLog: "classpath:/db/changelog/root.yaml"
     enabled: ${LIQUIBASE_ENABLED:false}
+
+jwt:
+  issuer: ${JWT_ISSUER}
+  audience: ${JWT_AUDIENCE}
+  secret: ${JWT_SECRET}
+  tokenLifeTimeSeconds: ${JWT_TOKEN_LIFE_TIME_SECONDS}
