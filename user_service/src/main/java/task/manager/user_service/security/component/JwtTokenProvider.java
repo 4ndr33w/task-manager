@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import task.manager.user_service.data.enums.RsaKeyType;
 import task.manager.user_service.exception.AuthorizationException;
 import task.manager.user_service.properties.JwtProperties;
 import task.manager.user_service.security.details.AppUserDetails;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class JwtTokenProvider {
 
     private final JwtProperties properties;
+    private final KeyProvider keyProvider;
 
     public String buildToken(AppUserDetails userDetails) {
         return JWT.create()
@@ -32,7 +34,7 @@ public class JwtTokenProvider {
                 .withExpiresAt(Instant.now().plusSeconds(properties.getTokenLifeTimeSeconds()))
                 .withJWTId(UUID.randomUUID().toString())
                 .withClaim(ClaimKey.USER_ID, String.valueOf(userDetails.getUser().getId()))
-                .sign(Algorithm.HMAC256(properties.getSecret()));
+                .sign(Algorithm.RSA256(keyProvider.getRsaKey(RsaKeyType.PRIVATE)));
     }
 
     public DecodedJWT decodeAccessToken(String token) {
@@ -46,7 +48,7 @@ public class JwtTokenProvider {
     }
 
     private JWTVerifier verifyToken() {
-        return JWT.require(Algorithm.HMAC256(properties.getSecret()))
+        return JWT.require(Algorithm.RSA256(keyProvider.getRsaKey(RsaKeyType.PUBLIC)))
                 .withIssuer(properties.getIssuer())
                 .build();
     }
