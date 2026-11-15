@@ -17,6 +17,7 @@ ext {
     postgresqlVersion = '42.7.14'
     lombokVersion = '1.18.48'
     mapstructVersion = '1.6.3'
+    openApiVersion = '3.2.0'
 }
 
 repositories {
@@ -27,6 +28,7 @@ dependencies {
     // Starters
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springframework.boot:spring-boot-starter-liquibase"
 
     // Datasource
     implementation "org.postgresql:postgresql:${postgresqlVersion}"
@@ -34,6 +36,9 @@ dependencies {
     // Lombok
     implementation "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    // OpenAPI
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${openApiVersion}"
 
     // Map Struct
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
