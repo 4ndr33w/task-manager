@@ -7,6 +7,7 @@ public record UserRequestDto(
         String lastName,
         String email,
         String phone,
-        LocalDate birthDate
+        LocalDate birthDate,
+        String password
 ) {
 }

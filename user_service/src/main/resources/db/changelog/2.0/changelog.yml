@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: user-roles-table.sql
+      relativeToChangeLogFile: true
+  - include:
+      file: alter-user-table.sql
+      relativeToChangeLogFile: true
