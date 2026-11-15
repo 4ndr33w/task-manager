@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,11 +17,13 @@ import task.manager.user_service.data.dto.response.UserResponseDto;
 import task.manager.user_service.data.entity.User;
 import task.manager.user_service.data.mapper.UserMapper;
 import task.manager.user_service.data.repository.UserRepository;
+import task.manager.user_service.exception.AuthorizationException;
 import task.manager.user_service.exception.UserNotFoundException;
 import task.manager.user_service.security.details.AppUserDetails;
 import task.manager.user_service.service.UserService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -42,18 +45,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
-    public UserResponseDto updateById(UserUpdateDto updateDto, UUID id) {
-        User existingUser = getUserByIdOrElseThrow(id);
+    public UserResponseDto update(UserUpdateDto updateDto) {
+        User existingUser = getUserByIdOrElseThrow(getUserIdFromSecurityContext());
         User updatedUser = userMapper.toUpdatedEntity(updateDto, existingUser);
-        log.info("Обновлен профиль пользователя с id: %s".formatted(id));
+        log.info("Обновлен профиль пользователя с id: %s".formatted(getUserIdFromSecurityContext()));
 
         return userMapper.toResponse(updatedUser);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public UserResponseDto getById(UUID id) {
-        User existingUser = getUserByIdOrElseThrow(id);
+    public UserResponseDto get() {
+        User existingUser = getUserByIdOrElseThrow(getUserIdFromSecurityContext());
         return userMapper.toResponse(existingUser);
     }
 
@@ -69,9 +72,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteById(UUID id) {
-        userRepository.deleteById(id);
-        log.info("Удалены данные профиля пользователя с id: {}", id);
+    public void delete() {
+        userRepository.deleteById(getUserIdFromSecurityContext());
+        log.info("Удалены данные профиля пользователя с id: {}", getUserIdFromSecurityContext());
     }
 
     private User getUserByIdOrElseThrow(UUID id) {
@@ -101,5 +104,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User existingUser = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UserNotFoundException("Не найден пользователь с email: %s".formatted(username)));
         return new AppUserDetails(existingUser);
+    }
+
+    private UUID getUserIdFromSecurityContext() {
+        try {
+            return (UUID) Objects.requireNonNull(SecurityContextHolder
+                    .getContext()
+                    .getAuthentication())
+                    .getCredentials();
+        }
+        catch (Exception e) {
+            log.error("Ошибка при извлечении пользовательских данных из SecurityContextHolder: {}", e.getMessage(), e);
+            throw new AuthorizationException("Ошибка при извлечении пользовательских данных из SecurityContextHolder");
+        }
     }
 }
