@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import task.manager.user_service.data.enums.UserRole;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -22,19 +24,15 @@ public class User {
     private String lastName;
     private String email;
     private String phone;
+    private String password;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Set<UserRole> roles;
     private LocalDate birthDate;
     @Column(updatable = false)
     private Instant createdAt;
     private Instant updatedAt;
 
-    @PrePersist
-    private void onCreate() {
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
-
-    @PreUpdate
-    private void onUpdate() {
-        this.updatedAt = Instant.now();
-    }
 }

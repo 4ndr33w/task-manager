@@ -6,12 +6,14 @@ import task.manager.user_service.data.dto.request.UserRequestDto;
 import task.manager.user_service.data.dto.request.UserUpdateDto;
 import task.manager.user_service.data.dto.response.UserResponseDto;
 import task.manager.user_service.data.entity.User;
+import task.manager.user_service.data.mapper.decorator.UserMapperDecorator;
 
 @Mapper(
         componentModel = ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE
 )
+@DecoratedWith(UserMapperDecorator.class)
 public interface UserMapper {
 
     User toEntity(UserRequestDto requestDto);
