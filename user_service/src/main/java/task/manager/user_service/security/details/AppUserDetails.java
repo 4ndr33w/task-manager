@@ -1,5 +1,6 @@
 package task.manager.user_service.security.details;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import task.manager.user_service.data.entity.User;
 
 import java.util.Collection;
 
+@Getter
 @RequiredArgsConstructor
 public class AppUserDetails implements UserDetails {
 
