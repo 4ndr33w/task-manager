@@ -11,7 +11,6 @@ import task.manager.user_service.data.dto.response.UserResponseDto;
 import task.manager.user_service.service.UserService;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,13 +24,13 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> getById(UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.getById(id));
+    public ResponseEntity<UserResponseDto> get() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.get());
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> updateById(UserUpdateDto updateDto, UUID id) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.updateById(updateDto, id));
+    public ResponseEntity<UserResponseDto> update(UserUpdateDto updateDto) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.update(updateDto));
     }
 
     @Override
@@ -40,8 +39,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<Void> deleteById(UUID id) {
-        userService.deleteById(id);
+    public ResponseEntity<Void> delete() {
+        userService.delete();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
