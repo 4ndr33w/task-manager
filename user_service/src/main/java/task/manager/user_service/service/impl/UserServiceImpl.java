@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import task.manager.user_service.data.dto.request.UserRequestDto;
@@ -14,6 +17,7 @@ import task.manager.user_service.data.entity.User;
 import task.manager.user_service.data.mapper.UserMapper;
 import task.manager.user_service.data.repository.UserRepository;
 import task.manager.user_service.exception.UserNotFoundException;
+import task.manager.user_service.security.details.AppUserDetails;
 import task.manager.user_service.service.UserService;
 
 import java.util.List;
@@ -22,7 +26,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -90,5 +94,12 @@ public class UserServiceImpl implements UserService {
             return 20;
         }
         return limit;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User existingUser = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UserNotFoundException("Не найден пользователь с email: %s".formatted(username)));
+        return new AppUserDetails(existingUser);
     }
 }
