@@ -20,8 +20,6 @@ import task.manager.user_service.security.component.JwtTokenProvider;
 import task.manager.user_service.security.details.AppUserDetails;
 import task.manager.user_service.utils.constant.AuthorizationType;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Base64;
 
@@ -57,7 +55,10 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
             String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
             if (authHeader.startsWith(AuthorizationType.BASIC)) {
-                String credentials = new String((Base64.getDecoder().decode(authHeader.substring(6))));
+                String credentials =
+                        new String(Base64
+                                .getDecoder()
+                                .decode(authHeader.substring(AuthorizationType.BASIC.length() + 1)));
 
                 return credentials.split(":", 2);
             }
@@ -92,7 +93,6 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
         }
         catch (Exception e) {
             log.error("Ошибка при попытке вернуть ответ с токуном при успешной авторизации по логину и  паролю {}", e.getMessage(), e);
-            throw new AuthorizationException("Ошибка при попытке вернуть ответ с токуном при успешной авторизации по логину и  паролю");
         }
     }
 }
