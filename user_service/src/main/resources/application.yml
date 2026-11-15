@@ -23,3 +23,7 @@ jwt:
   audience: ${JWT_AUDIENCE}
   secret: ${JWT_SECRET}
   tokenLifeTimeSeconds: ${JWT_TOKEN_LIFE_TIME_SECONDS}
+
+key-path:
+  privateKeyPath: ${KEY_PATH_PRIVATE}
+  publicKeyPath: ${KEY_PATH_PUBLIC}
